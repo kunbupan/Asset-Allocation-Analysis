@@ -10,24 +10,25 @@ This project backtests a tactical asset-allocation strategy across seven ETFs, t
 
 ## Key findings
 
-<!-- Fill in after the final run. Keep this to 3–4 bullets: this is what a recruiter reads. -->
-
 | | Momentum (net of costs) | 60/40 benchmark |
 |---|---|---|
-| CAGR | `[x.x%]` | `[x.x%]` |
-| Volatility | `[x.x%]` | `[x.x%]` |
-| Sharpe ratio | `[x.xx]` | `[x.xx]` |
-| Max drawdown | `[x.x%]` | `[x.x%]` |
-| Tracking error | `[x.x%]` | — |
-| Information ratio | `[x.xx]` | — |
+| CAGR | 7.92% | 8.16% |
+| Volatility | 11.99% | 9.25% |
+| Sharpe ratio | 0.49 | 0.67 |
+| Max drawdown | −19.13% | −29.46% |
+| Calmar ratio | 0.41 | 0.28 |
+| Positive months | 57.26% | 66.94% |
+| Avg monthly turnover | 27.02% | — |
+| Months fully in cash | 2.81% | — |
 
-*Period: `[YYYY-MM]` to `[YYYY-MM]`, monthly data.*
+*Period: March 2006 to October 2026 (248 months), monthly data.*
 
-- `[Headline: e.g. "The strategy lagged 60/40 by x.x% a year but cut the maximum drawdown from x% to y%."]`
+- The strategy lagged the 60/40 by 0.2% a year but cut the maximum drawdown from 29.5% to 19.1%.
 - `[Attribution: e.g. "Most of the shortfall came from allocation: time spent in cash and real assets during the post-2009 equity rally."]`
 - `[Robustness: e.g. "Results hold for lookbacks of 6–12 months but weaken for top-N above 3."]`
 
-![Growth of 1 and drawdowns](reports/figures/growth_drawdown.png)
+![Growth of $1 and drawdowns: momentum vs 60/40](reports/figures/growth_drawdown.png)
+*Top: growth of $1 invested in March 2006 (log scale). Bottom: decline from the previous peak.*
 
 ---
 
@@ -45,7 +46,6 @@ This project backtests a tactical asset-allocation strategy across seven ETFs, t
 ## 2. Data
 
 - Monthly adjusted close prices from Yahoo Finance via `yfinance` (dividends reinvested).
-- `[Cash return: e.g. 3-month US T-bill rate from FRED (series DTB3)]`
 - All data is public, so anyone can rerun the analysis with one command.
 
 ## 3. Methodology
@@ -126,8 +126,3 @@ jupyter notebook notebooks/01_backtest.ipynb
 ```
 
 Or open the notebooks directly in Google Colab.
-
-## About
-
-Built by **Pan Zhang**: CFA Level III candidate, MBA (Mannheim Business School), formerly Analytics Lead at Elsevier.
-`[LinkedIn URL]`
