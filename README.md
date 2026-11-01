@@ -14,14 +14,9 @@ This project backtests a dual-momentum tactical asset-allocation strategy across
 
 ## Key findings
 
-**The strategy lagged the 60/40 by 0.2% a year but cut the maximum drawdown from 29.5% to 19.1%.**
-
-- **Backtest: no extra return, a different shape of risk.** Momentum ended close to the 60/40 (7.9% vs 8.2% a year) with a lower Sharpe ratio (0.49 vs 0.67). It protected well in the slow 2008 bear market but lost ground at sharp reversals such as 2009 and 2020.
+- **Backtest: similar return, smaller losses.** Over 20 years, momentum returned 7.9% a year against 8.2% for the 60/40, with higher volatility (12.0% vs 9.3%) but a much smaller maximum loss (−19.1% vs −29.5%).
 - **Performance analysis: active risk without reward, and lumpy.** It deviated from the 60/40 by almost 10% a year (tracking error) for an information ratio of almost zero. Most of the gain came in three years (2008, 2017, 2025), and it trailed in most rolling 3-year windows from 2012 to 2023.
 - **Attribution: rotation worked, implementation used up the gain.** Holding fewer bonds and more real assets added value; the equity ETFs it picked and time in cash cost value, and trading costs (−0.32 points a year) cancelled out the allocation gain (+0.32).
-
-![Growth of $1 and drawdowns: momentum vs 60/40](reports/figures/growth_drawdown.png)
-*Top: growth of $1 invested in March 2006 (log scale). Bottom: decline from the previous peak.*
 
 ---
 
@@ -84,6 +79,9 @@ The monthly effects add up exactly to the monthly active return; the code checks
 | Months fully in cash | 2.81% | — |
 
 *Period: March 2006 to October 2026 (248 months), monthly data.*
+
+![Growth of $1 and drawdowns: momentum vs 60/40](reports/figures/growth_drawdown.png)
+*Top: growth of $1 invested in March 2006 (log scale). Bottom: decline from the previous peak.*
 
 ### Performance analysis
 
