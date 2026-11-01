@@ -1,8 +1,12 @@
-# Multi-Asset Momentum: Backtest, Performance & Attribution
+# Tactical Asset Allocation: Backtest and Performance Analysis
 
 **Does a 12-month momentum rule beat a static 60/40 portfolio after costs, and if so, where does the difference come from?**
 
-This project backtests a tactical asset-allocation strategy across seven ETFs, then evaluates it the way an asset manager's performance team would: risk-adjusted returns against a benchmark, and Brinson-Fachler attribution that splits the active return into asset-allocation, selection and cost effects.
+This project backtests a dual-momentum tactical asset-allocation strategy across seven ETFs from March 2006 to October 2026 and evaluates it against a static 60/40 portfolio in three steps:
+
+1. **Backtest:** simulate the strategy over 20 years and compare its return, volatility, Sharpe ratio and drawdowns with the 60/40.
+2. **Performance analysis:** risk-adjusted and relative metrics, calendar-year returns and rolling 3-year performance.
+3. **Attribution:** Brinson-Fachler analysis by asset class, splitting the active return into allocation, selection and trading-cost effects.
 
 > Personal research project. Not investment advice.
 
@@ -10,22 +14,11 @@ This project backtests a tactical asset-allocation strategy across seven ETFs, t
 
 ## Key findings
 
-| | Momentum (net of costs) | 60/40 benchmark |
-|---|---|---|
-| CAGR | 7.92% | 8.16% |
-| Volatility | 11.99% | 9.25% |
-| Sharpe ratio | 0.49 | 0.67 |
-| Max drawdown | −19.13% | −29.46% |
-| Calmar ratio | 0.41 | 0.28 |
-| Positive months | 57.26% | 66.94% |
-| Avg monthly turnover | 27.02% | — |
-| Months fully in cash | 2.81% | — |
+**The strategy lagged the 60/40 by 0.2% a year but cut the maximum drawdown from 29.5% to 19.1%.**
 
-*Period: March 2006 to October 2026 (248 months), monthly data.*
-
-- The strategy lagged the 60/40 by 0.2% a year but cut the maximum drawdown from 29.5% to 19.1%.
-- `[Attribution: e.g. "Most of the shortfall came from allocation: time spent in cash and real assets during the post-2009 equity rally."]`
-- `[Robustness: e.g. "Results hold for lookbacks of 6–12 months but weaken for top-N above 3."]`
+- **Backtest: no extra return, a different shape of risk.** Momentum ended close to the 60/40 (7.9% vs 8.2% a year) with a lower Sharpe ratio (0.49 vs 0.67). It protected well in the slow 2008 bear market but lost ground at sharp reversals such as 2009 and 2020.
+- **Performance analysis: active risk without reward, and lumpy.** It deviated from the 60/40 by almost 10% a year (tracking error) for an information ratio of almost zero. Most of the gain came in three years (2008, 2017, 2025), and it trailed in most rolling 3-year windows from 2012 to 2023.
+- **Attribution: rotation worked, implementation used up the gain.** Holding fewer bonds and more real assets added value; the equity ETFs it picked and time in cash cost value, and trading costs (−0.32 points a year) cancelled out the allocation gain (+0.32).
 
 ![Growth of $1 and drawdowns: momentum vs 60/40](reports/figures/growth_drawdown.png)
 *Top: growth of $1 invested in March 2006 (log scale). Bottom: decline from the previous peak.*
@@ -59,42 +52,106 @@ This project backtests a tactical asset-allocation strategy across seven ETFs, t
 | Effect | Formula | Question it answers |
 |---|---|---|
 | Allocation | (w<sub>p</sub> − w<sub>b</sub>) × (r<sub>b,i</sub> − R<sub>b</sub>) | Did over- or underweighting an asset class help? |
-| Selection | w<sub>b</sub> × (r<sub>p,i</sub> − r<sub>b,i</sub>) | Did choosing different ETFs within a class help (e.g. TLT instead of IEF)? |
-| Interaction | (w<sub>p</sub> − w<sub>b</sub>) × (r<sub>p,i</sub> − r<sub>b,i</sub>) | The combined effect of the two decisions |
+| Selection | w<sub>p</sub> × (r<sub>p,i</sub> − r<sub>b,i</sub>) | Did choosing different ETFs within a class help (e.g. TLT instead of IEF)? |
 | Trading costs | − turnover × cost | How much implementation cost |
 
-Asset classes: Equity (SPY, EFA, EEM), Bonds (IEF, TLT), Real assets (GLD, VNQ) and Cash. The benchmark holds no real assets, so a 50/50 GLD/VNQ mix serves as the neutral return for that class.
+*w* = weight of asset class *i*, *r* = return of asset class *i*, *R<sub>b</sub>* = total 60/40 return; *p* = momentum portfolio, *b* = 60/40 benchmark. Selection includes the interaction term, a common presentation that keeps two effects instead of three.
 
-Monthly effects are linked over time with the **Carino method**, so the linked effects add up exactly to the cumulative active return. The code checks this reconciliation on every run.
+| Asset class | ETFs momentum can hold | 60/40 weight | Benchmark return used for the class |
+|---|---|---|---|
+| Equity | SPY, EFA, EEM | 60% | SPY |
+| Bonds | IEF, TLT | 40% | IEF |
+| Real assets | GLD, VNQ | 0% | 50/50 GLD + VNQ (neutral mix, since the 60/40 holds none) |
+| Cash | Uninvested weight | 0% | 0% (cash earns no interest) |
 
-**Robustness.** A parameter sweep over lookback (3–12 months) and top-N (1–5), plus results by sub-period, to see whether the result depends on one lucky parameter choice or one market regime.
+The monthly effects add up exactly to the monthly active return; the code checks this reconciliation on every run. Results are shown as average annual contributions (average monthly effect × 12) and by calendar year, where monthly effects are linked with the **Carino method** so that each year's effects add up exactly to that year's return difference.
 
 ## 4. Results
 
-### Attribution summary
+### Backtest
 
-<!-- Paste the summary table from notebooks/02_performance_attribution.ipynb -->
+*Source: `notebooks/01_backtest.ipynb`*
 
-| Asset class | Allocation | Selection | Interaction | Total |
-|---|---|---|---|---|
-| Equity | | | | |
-| Bonds | | | | |
-| Real assets | | | | |
-| Cash | | | | |
-| Trading costs | | | | |
-| **Total** | | | | |
+| | Momentum (net of costs) | 60/40 benchmark |
+|---|---|---|
+| CAGR | 7.92% | 8.16% |
+| Volatility | 11.99% | 9.25% |
+| Sharpe ratio | 0.49 | 0.67 |
+| Max drawdown | −19.13% | −29.46% |
+| Calmar ratio | 0.41 | 0.28 |
+| Positive months | 57.26% | 66.94% |
+| Avg monthly turnover | 27.02% | — |
+| Months fully in cash | 2.81% | — |
+
+*Period: March 2006 to October 2026 (248 months), monthly data.*
+
+### Performance analysis
+
+*Source: `notebooks/02_performance_analysis.ipynb`*
+
+| | Momentum | 60/40 |
+|---|---|---|
+| Sortino ratio | 0.79 | 1.00 |
+| Best month | 11.56% | 7.73% |
+| Worst month | −9.68% | −10.26% |
+
+| Momentum relative to 60/40 | |
+|---|---|
+| Active return (annualised) | 0.06% |
+| Tracking error | 9.87% |
+| Information ratio | 0.01 |
+| Beta | 0.77 |
+| Correlation | 0.59 |
+| Months beating 60/40 | 48.8% |
+| Full calendar years beating 60/40 | 9 of 19 |
+| Rolling 36-month windows beating 60/40 | 38% |
+
+- **Active risk without reward.** The strategy deviated from the 60/40 by almost 10% a year (tracking error), but its average active return was close to zero, so the information ratio is essentially zero.
+- **Gains concentrated in a few years.** Large wins in 2008 (+25 percentage points), 2025 (+17) and 2017 (+12.5) offset losses in 2016 (−14), 2011 (−12), 2020 (−11) and 2009 (−10). It led in only 9 of 19 full years and trailed in most rolling 3-year windows between 2012 and 2023. In 2022 both portfolios lost about 16%.
+- **A different return pattern.** A correlation of 0.59 and a beta of 0.77 show it behaves quite differently from the 60/40. Part of its higher volatility is upside: its best month was +11.6% against +7.7%, while the worst months were similar.
+
+![Calendar-year returns](reports/figures/calendar_returns.png)
+*Calendar-year returns. 2006 and 2026 are partial years.*
+
+![Rolling 36-month performance](reports/figures/rolling_36m.png)
+*Top: momentum minus 60/40, annualised over the previous 36 months. Bottom: rolling 36-month Sharpe ratios.*
+
+### Attribution
+
+*Source: `notebooks/03_attribution.ipynb`*
+
+**Average weights**
+
+| Asset class | Momentum | 60/40 | Difference |
+|---|---|---|---|
+| Equity | 44.6% | 60.0% | −15.4% |
+| Bonds | 16.1% | 40.0% | −23.9% |
+| Real assets | 33.7% | 0.0% | +33.7% |
+| Cash | 5.5% | 0.0% | +5.5% |
+
+**Average annual contribution to active return** (percentage points per year)
+
+| Asset class | Allocation | Selection | Total |
+|---|---|---|---|
+| Equity | −0.44 | −1.33 | −1.77 |
+| Bonds | +1.35 | +0.23 | +1.58 |
+| Real assets | +0.11 | +1.16 | +1.27 |
+| Cash | −0.70 | — | −0.70 |
+| Trading costs | | | −0.32 |
+| **Total** | **+0.32** | **+0.06** | **+0.06** |
+
+The total of +0.06 points a year equals the annualised active return. It is slightly positive although momentum's CAGR is lower, because the more volatile strategy loses more to compounding (volatility drag).
+
+- **Allocation helped, but costs used it up.** Asset allocation added +0.32 points a year, mainly by holding far fewer bonds than the 60/40 (16% against 40% on average). Trading costs took −0.32 points a year, so the net result was close to zero.
+- **Bonds and real assets added value, equities and cash cost it.** Underweighting bonds (+1.58) and choosing between gold and REITs (+1.27) helped. The equity ETFs it picked lagged the S&P 500 when it held international or emerging-market equities (selection −1.33), and time in cash cost −0.70 a year, as the strategy tended to hold cash in months when the 60/40 did well. Cash earns no interest in this backtest, so the cash effect is slightly overstated.
+- **The 2008 protection came from rotation, not cash.** In 2008 (+25.0 points against the 60/40), the gains came from equities (+9.6), bonds (+9.3) and real assets (+6.9), while cash contributed −0.8. The strategy had moved into the asset classes that held up, rather than out of the market.
+- **Large losses came from turning points.** In 2020 (−10.8), allocation alone cost −15.7 points in a year of a sharp crash followed by a rapid recovery, the kind of reversal a 12-month signal is slow to follow. In 2016 (−13.8) and 2011 (−11.8), equities and real assets both detracted.
+
+![Average annual contribution by asset class](reports/figures/attribution_by_class.png)
+*Average annual contribution to active return by asset class and effect.*
 
 ![Attribution by year](reports/figures/attribution_by_year.png)
-
-### Robustness
-
-![Sharpe ratio across lookback and top-N](reports/figures/parameter_sweep.png)
-
-`[2–3 sentences: what the sweep and sub-periods show.]`
-
-### Dashboard
-
-`[Link to Tableau Public / Power BI dashboard, with a screenshot]`
+*Momentum minus 60/40 by calendar year, split into allocation, selection and trading costs. The black marks show each year's total difference. 2006 and 2026 are partial years.*
 
 ## 5. Limitations
 
@@ -107,22 +164,24 @@ Monthly effects are linked over time with the **Carino method**, so the linked e
 
 ```
 ├── notebooks/
-│   ├── 01_backtest.ipynb                 # strategy, benchmark, headline statistics
-│   └── 02_performance_attribution.ipynb  # metrics, attribution, robustness, charts
+│   ├── 01_backtest.ipynb               # backtest: return and risk statistics, growth and drawdown chart
+│   ├── 02_performance_analysis.ipynb   # extended metrics, calendar-year returns, rolling 36-month view
+│   └── 03_attribution.ipynb            # Brinson-Fachler attribution by asset class
 ├── src/
-│   ├── backtest.py                       # signal, weights, returns, costs
-│   ├── performance.py                    # risk and return metrics
-│   └── attribution.py                    # Brinson-Fachler + Carino linking
-├── reports/figures/                      # charts used in this README
-├── dashboard/                            # exported CSVs for Tableau / Power BI
-└── requirements.txt
+│   ├── backtest.py                     # strategy, benchmark, costs and statistics (shared by all notebooks)
+│   └── attribution.py                  # Brinson-Fachler effects and Carino linking
+├── reports/figures/                    # charts used in this README (saved by the notebooks)
+├── requirements.txt
+└── README.md
 ```
 
 ## 7. How to run
 
+From the project folder:
+
 ```bash
 pip install -r requirements.txt
-jupyter notebook notebooks/01_backtest.ipynb
+jupyter lab
 ```
 
-Or open the notebooks directly in Google Colab.
+Then open the notebooks in `notebooks/` and run them in order (01 → 03). Each notebook downloads the price data, runs the backtest through `src/backtest.py` and saves its charts to `reports/figures/`.
